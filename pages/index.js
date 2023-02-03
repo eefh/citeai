@@ -45,8 +45,7 @@ export default function Home() {
           </Head>
 
           <div className={styles.app}>
-              {loading && <div className={styles.loading}>
-                </div>}
+              {loading && <div className={styles.loading}></div>}
               {!loading && reference && (
                   <div className={styles.reference}>
                       <p>
@@ -63,7 +62,7 @@ export default function Home() {
                       rows="1"
                       onChange={handleAreaInput}
                   ></textarea>
-                  <ion-icon onClick={handleSubmit} name="send"></ion-icon>
+                  <p onClick={handleSubmit}>Send</p>
               </div>
           </div>
       </div>

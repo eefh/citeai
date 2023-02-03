@@ -44,6 +44,24 @@
     transition: 300ms;
 }
 
+.field > p {
+    position: absolute;
+    right: 28px;
+    cursor: pointer;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.479);
+    transition: 300ms;
+}
+
+.field>p:hover {
+    position: absolute;
+    right: 28px;
+    cursor: pointer;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.479);
+    transition: 300ms;
+}
+
 .field > ion-icon:hover {
     color: rgba(0, 0, 0, 0.664);
 }
