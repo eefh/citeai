@@ -1,8 +1,33 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useState } from 'react';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+    const [ userInput, setUserInput ] = useState("");
+    const [ reference, setReference ] = useState("");
+    const [ loading, setLoading ] = useState(false);
+    const handleSubmit = async () => {
+        setLoading(true);
+        const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                assertion: userInput
+            }),
+        });
+        const data = await response.json();
+        console.log(data);
+        setLoading(false);
+        setReference(data.result.response);
+    }
+    const handleAreaInput = (event) => {
+        const textarea = event.target;
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
   return (
       <div className={styles.container}>
           <Head>
@@ -20,9 +45,25 @@ export default function Home() {
           </Head>
 
           <div className={styles.app}>
+              {loading && <div className={styles.loading}>
+                </div>}
+              {!loading && reference && (
+                  <div className={styles.reference}>
+                      <p>
+                          <em>{reference}</em>
+                      </p>
+                  </div>
+              )}
+
               <div className={styles.field}>
-                  <textarea className={styles.textarea} rows="1"></textarea>
-                  <ion-icon name="send"></ion-icon>
+                  <textarea
+                      value={userInput}
+                      onInput={(e) => setUserInput(e.target.value)}
+                      className={styles.textarea}
+                      rows="1"
+                      onChange={handleAreaInput}
+                  ></textarea>
+                  <ion-icon onClick={handleSubmit} name="send"></ion-icon>
               </div>
           </div>
       </div>
