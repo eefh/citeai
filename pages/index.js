@@ -7,6 +7,7 @@ export default function Home() {
     const [ userInput, setUserInput ] = useState("");
     const [ reference, setReference ] = useState("");
     const [ loading, setLoading ] = useState(false);
+    const [ assertions, setAssertions ] = useState();
     const handleSubmit = async () => {
         setLoading(true);
         const response = await fetch("/api/generate", {
@@ -28,6 +29,26 @@ export default function Home() {
         textarea.style.height = "auto";
         textarea.style.height = `${textarea.scrollHeight}px`;
     };
+    const handleGetAssertions = async () => {
+        try {
+            setLoading(true)
+            const response = await fetch("/api/findAssertions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    text: userInput,
+                }),
+            });
+            const data = await response.json();
+            setAssertions(data.result);
+            setLoading(false);
+            console.log(data);
+        } catch (error) {
+            setLoading(false)
+        }
+    }
   return (
       <div className={styles.container}>
           <Head>
@@ -43,7 +64,6 @@ export default function Home() {
                   src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
               ></script>
           </Head>
-
           <div className={styles.app}>
               {loading && <div className={styles.loading}></div>}
               {!loading && reference && (
@@ -53,7 +73,19 @@ export default function Home() {
                       </p>
                   </div>
               )}
-
+                {assertions && 
+                    <div className={styles.assertions}>
+                        <p>Assertions</p>
+                        {assertions.map((e, i) => {
+                            return (
+                                <p className={styles.assertion} key={i}>
+                                    <em>"{e}"</em>
+                                    <ion-icon name="settings-sharp"></ion-icon>
+                                </p>
+                            );
+                        })}
+                    </div>
+                }
               <div className={styles.field}>
                   <textarea
                       value={userInput}
