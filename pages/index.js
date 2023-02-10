@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -9,7 +10,11 @@ export default function Home() {
     const [ loading, setLoading ] = useState(false);
     const [ assertions, setAssertions ] = useState();
     const [ links, setLinks ] = useState();
-    const handleSubmit = async () => {
+    const linkArray = [
+        { title: "Hello", snippet: "Hi", link: "linklinklink" },
+        { title: "Hello", snippet: "Hi", link: "linklinklink" },
+    ];
+    const handleCite = async (assertion, i) => {
         setLoading(true);
         const response = await fetch("/api/generate", {
             method: "POST",
@@ -17,21 +22,28 @@ export default function Home() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                assertion: userInput
+                assertion: assertion
             }),
         });
         const data = await response.json();
-        console.log(data.result);
-        setLoading(false);
-        setLinks(data.result);
+        console.log("Data result: ",data.result);
+        return data.result
+
     }
+
+    useEffect(() => {
+        console.log(links);
+    }, [links]);
+
     const handleAreaInput = (event) => {
         const textarea = event.target;
         textarea.style.height = "auto";
         textarea.style.height = `${textarea.scrollHeight}px`;
     };
     const handleGetAssertions = async () => {
+
         try {
+            setLinks(null);
             setLoading(true)
             const response = await fetch("/api/findAssertions", {
                 method: "POST",
@@ -44,6 +56,12 @@ export default function Home() {
             });
             const data = await response.json();
             setAssertions(data.result);
+            data.result.map(async assertion => {
+                const cite = await handleCite(assertion)
+                await setLinks((prevLinks) =>
+                    prevLinks ? [...prevLinks, cite[0]] : [cite[0]]
+                );
+            });
             setLoading(false);
             console.log(data);
         } catch (error) {
@@ -67,33 +85,43 @@ export default function Home() {
           </Head>
           <div className={styles.app}>
               {loading && <div className={styles.loading}></div>}
+
+              {assertions && (
+                  <div className={styles.assertions}>
+                      <p>
+                          {assertions.map((e, i) => {
+                              return (
+                                  <p className={styles.assertion} key={i}>
+                                      {e}{" "}
+                                      <span className={styles.cite}>{i + 1}</span>
+                                  </p>
+                              );
+                          })}
+                      </p>
+                  </div>
+              )}
               {!loading && links && (
                   <div className={styles.reference}>
                       {links.map((e, i) => {
-
-                        return (
-                            <div className={styles.source}>
-                                <h4>{e.title}</h4>
-                                <p>
-                                    <em>{e.link}</em>
-                                </p>
-                            </div>
-                        );
-
-                      })}
-
-
-                  </div>
-              )}
-              {assertions && (
-                  <div className={styles.assertions}>
-                      <p>Assertions</p>
-                      {assertions.map((e, i) => {
                           return (
-                              <p className={styles.assertion} key={i}>
-                                  <em>"{e}"</em>
-                                  <ion-icon name="settings-sharp"></ion-icon>
-                              </p>
+                              <div className={styles.source}>
+                                  <div className={styles.sourceTop}>
+                                      <h4>{e.title}</h4>
+                                      <p className={styles.sourceCite}>{i + 1}</p>
+                                  </div>
+
+                                  <p className={styles.sourceSnippet}>
+                                      {" "}
+                                      <em>{e.snippet}</em>
+                                  </p>
+                                  <a
+                                      className={styles.sourceLink}
+                                      href={e.link}
+                                      target="_blank"
+                                  >
+                                      {e.link}
+                                  </a>
+                              </div>
                           );
                       })}
                   </div>
@@ -106,7 +134,7 @@ export default function Home() {
                       rows="1"
                       onChange={handleAreaInput}
                   ></textarea>
-                  <p onClick={handleSubmit}>Send</p>
+                  <p onClick={handleGetAssertions}>Send</p>
               </div>
           </div>
       </div>

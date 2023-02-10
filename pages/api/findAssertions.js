@@ -22,5 +22,5 @@ export default async function (req, res) {
 
 const generatePrompt = (text) => {
     console.log(text);
-    return `"${text}" "list every medical assertion that would require a citation, contain each within square brackets, ignore statements that are common sense" `;
+    return `"${text}" (Find each medical assertion in this paragraph, separate each within square brackets): `;
 };
