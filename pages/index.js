@@ -10,6 +10,7 @@ export default function Home() {
     const [ loading, setLoading ] = useState(false);
     const [ assertions, setAssertions ] = useState();
     const [ links, setLinks ] = useState();
+    const [ hover, setHover ] = useState(null);
     const linkArray = [
         { title: "Hello", snippet: "Hi", link: "linklinklink" },
         { title: "Hello", snippet: "Hi", link: "linklinklink" },
@@ -26,14 +27,10 @@ export default function Home() {
             }),
         });
         const data = await response.json();
-        console.log("Data result: ",data.result);
+
         return data.result
 
     }
-
-    useEffect(() => {
-        console.log(links);
-    }, [links]);
 
     const handleAreaInput = (event) => {
         const textarea = event.target;
@@ -63,7 +60,6 @@ export default function Home() {
                 );
             });
             setLoading(false);
-            console.log(data);
         } catch (error) {
             setLoading(false)
         }
@@ -104,7 +100,7 @@ export default function Home() {
                   <div className={styles.reference}>
                       {links.map((e, i) => {
                           return (
-                              <div className={styles.source}>
+                              <div className={styles.source} onMouseOverCapture={() => setHover(i)}>
                                   <div className={styles.sourceTop}>
                                       <h4>{e.title}</h4>
                                       <p className={styles.sourceCite}>{i + 1}</p>
@@ -133,6 +129,7 @@ export default function Home() {
                       className={styles.textarea}
                       rows="1"
                       onChange={handleAreaInput}
+                      placeholder="Enter text to be cited"
                   ></textarea>
                   <p onClick={handleGetAssertions}>Send</p>
               </div>
