@@ -27,7 +27,7 @@ export default function Home() {
             }),
         });
         const data = await response.json();
-
+        setLoading(false)
         return data.result
 
     }

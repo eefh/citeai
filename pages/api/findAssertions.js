@@ -12,7 +12,7 @@ export default async function (req, res) {
             req.body.text
         ),
         temperature: 0,
-        max_tokens: 3000
+        max_tokens: 3000,
     });
     console.log(completion.data);
     res.status(200).json({
@@ -22,5 +22,5 @@ export default async function (req, res) {
 
 const generatePrompt = (text) => {
     console.log(text);
-    return `"${text}" (Find each assertion made in this paragraph, separate each assertion within square brackets): `;
+    return `"${text}" (Find each assertion made in this paragraph, separate each assertion within square brackets, don't repeat): `;
 };
