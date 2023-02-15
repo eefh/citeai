@@ -38,7 +38,6 @@ export default function Home() {
         textarea.style.height = `${textarea.scrollHeight}px`;
     };
     const handleGetAssertions = async () => {
-
         try {
             setLinks(null);
             setLoading(true)
@@ -56,7 +55,7 @@ export default function Home() {
             data.result.map(async assertion => {
                 const cite = await handleCite(assertion)
                 await setLinks((prevLinks) =>
-                    prevLinks ? [...prevLinks, cite[0]] : [cite[0]]
+                    prevLinks ? [...prevLinks, cite[0], cite[1], cite[2]] : [cite[0], cite[1], cite[2]]
                 );
             });
             setLoading(false);
@@ -103,7 +102,7 @@ export default function Home() {
                               <div className={styles.source} onMouseOverCapture={() => setHover(i)}>
                                   <div className={styles.sourceTop}>
                                       <h4>{e.title}</h4>
-                                      <p className={styles.sourceCite}>{i + 1}</p>
+                                      <p className={styles.sourceCite}>{Math.floor((i/3) + 1)}</p>
                                   </div>
 
                                   <p className={styles.sourceSnippet}>
